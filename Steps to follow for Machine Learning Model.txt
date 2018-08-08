@@ -1,0 +1,117 @@
+
+#Generic Steps to follow for Machine Learning Model
+-----------------------------------------------------
+#Step 0 : Frame the Objective:
+
+- What is Business objective & expecting the benifit from the Model
+- Which Algorithm needs to be selected. : Supervised,Unsupervised or Reinforcement/Classification or Regression/Batch or Online Learning
+- Performance Measure : MSE,RMSE etc.
+- Efforts required to tweaking it.
+
+# Step 1: Read data from File.
+------------------------------
+Type 1 :
+#Function for File Read
+import os
+import pandas as pd
+def file_read(file_path,file_name):
+	file_to_read = os.path.join(file_path,file_name)
+	return pd.read_csv(file_to_read)
+
+FILE_PATH = 'C:/Users/Admin/Documents/CloudxLab Machine Learning/ml-master/machine_learning/datasets/housing/'	
+df = file_read (FILE_PATH,'housing.csv')
+
+Type 2:
+df = pd.read_csv('housing.csv')
+=========================================================================
+
+
+# Step 2: Explore the Data
+--------------------------
+
+df.head() : Check all the values & try to find the different types of values(like Categorical Values) or measurement of values(like 10000 scaled to 10)
+df.describe()/df.info() : Check the Count/types/mean/std/max etc all of columns.
+	
+#Count Values of Categorical Data
+val_count = df['Categorical'].value_counts()
+
+# Plot Histogram of all Columns : Check for Capped values/Long tail
+df.hist(bins=50,finsize=(20,15))
+df['median_income'].hist()
+
+-> If Values are Capped, then we need to think for estimate of those Capped Areas.
+	-> Solution : Recollect the Data for those Capped Label or remove it from test Dataset.
+	
+-> If Long tails are there, transform attribute to more bell shaped Distributions.
+	df['income_cat'] = np.ceil(df['median_income']/1.5)	
+    df[['income_cat'].where(df['income_cat']<5,5.0,inplace=True)
+	
+=========================================================================
+
+
+# Step 3: Split the Data into Train & Test Set
+----------------------------------------------
+	
+-> Split the Train & Test Set now for avoiding Data Snooping or Overfitting & again visualise the Training Set Data Again.
+
+Type 1: Use Standard Method to split
+------------------------------------
+
+from sklearn.model_selection  import train_test_split
+train_set,test_set = train_test_split(df,test_size=0.2,random_seed=42)
+print(len(train_set),"Train Set + "),len(test_set),"Test Set")
+
+Type 2: User Defined Method for Splitting the Data
+--------------------------------------------------
+def split_train_test(data,test_size):
+	np.random.seed(42)
+	shuffled_indices = np.random.permutation(len(data));
+	test_set_size = int(len(data)*test_size)
+	test_set_indices = shuffled_indices[:test_set_size]
+	train_set_indices = shuffled_indices[test_set_size:]
+	return data.iloc[train_set_indices],data.iloc[test_set_indices]
+	
+Problem with this Split Function : When new added to the Dataset, splitting of data can cause Data Snooping.
+
+Type 3 : Split Function Using Identifier
+----------------------------------------
+import hashlib
+
+def test_set_check(identifer,test_ratio,hash):
+	return hash(np.int64(identifer)).digest()[-1] < 256*test_ratio
+	
+def split_train_test_id(data,test_ratio,id_column,hash=hashlib.md5):
+	ids = data[id_column]
+	in_test_set = ids.apply(lambda id_: test_set_check(id_,test_ratio,hash))
+	return data.loc[~in_test_set],data.loc[in_test_set]
+	
+# Combine Latitude & Longitude to form a unique IDs
+df_id = df.reset_index()
+df_id['id'] =  df['longitude']*1000+df['latitude']
+train_set,test_set = split_train_test_id(df_id,0.2,'id')
+print(len(train_set),"Train Set + "),len(test_set),"Test Set")
+
+Type 3 : Split Function Using Stratified Sampling (From Different Strata on a column,take fixed % from each Strata)
+# To Remove Sampling Biasness
+-------------------------------------------------
+from sklearn.model_selection import StratifiedShuffleSplit
+split = StratifiedShuffleSplit(n_splits=1,test_size=0.2,random_seed=42)
+for train_index,test_index in split.split(df,df['income_cat']):
+	strat_train_set = df.loc[train_index]
+	strat_test_set = df.loc[test_index]
+	
+# Compare income category proportion in Stratified Sampling and Random Sampling
+
+def income_cat_proportions(data):
+    return data["income_cat"].value_counts() / len(data)
+
+train_set, test_set = train_test_split(df, test_size=0.2, random_state=42)
+
+compare_props = pd.DataFrame({
+    "Overall": income_cat_proportions(df),
+    "Stratified": income_cat_proportions(strat_test_set),
+    "Random": income_cat_proportions(test_set_id),
+}).sort_index()
+compare_props["Rand. %error"] = 100 * compare_props["Random"] / compare_props["Overall"] - 100
+compare_props["Strat. %error"] = 100 * compare_props["Stratified"] / compare_props["Overall"] - 100
+	

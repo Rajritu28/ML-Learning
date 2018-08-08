@@ -1,0 +1,152 @@
+														DATA SCIENCE
+														------------
+- Artifical Intelligence : Referring to computers behaving intelligently. Performs tasks as human Intelligence.
+						   AI to refer to a technical field which focused on programming computers to make decisions
+						   Sub Objectives : Reasoning,Navigate,NLP,Represent Knowledge,Perception
+						   
+						   
+- Machine Learning : Referring to making machines (computers) learn certain patterns using Set of Algorithm and then to make predictions using those
+                     learnt patterns
+					 ML focuses more on making predictions about the future
+					 Data + Intelligence
+					  
+	Collect Data (Use of Devices & Connectivity) -> Cleaning -> Process
+	
+	If Data is Huge -> Use Distributed Processor
+	Maths/Graphics  -> GPUs
+	
+	Algorithm Categories : Human Supervision,Learn Incremental,How they generalize
+	
+	Human Supervision Categories :
+	
+		- Supervised Learning    : Classification (Ex: Spam Detection) & Regression(Ex : Price Of Car)
+		- Unsupervised Learning  : Clustering
+		- Reinforcement Learning : Used by Robots for Walking
+
+    Gradient Descent : Instead of trying all lines, only try those lines which are useful.
+	                   Stochastic Gradient Descent : Use of Loss Function (loss_function = max(0,1-y*score))
+	
+	Learn Incremental Categories:
+		- Batch Processing : Also Offline Learning
+		- Online Learning  :
+		
+	How they generalize Categories :
+		- Instance Based Learning :
+		- Model Based Learning    :
+	
+	ANN - Artifical Neural Network
+	
+	Histogram : Plotting the frequency of all event
+	
+	Box Plot : 25% down,25%Up,50% in box, line in middle is Median
+	
+	Mean : Average
+	Mode : Most Frequent
+	Median : Pick the middle number (if Odd), Sum the Middle two no & divide by 2 (If Even)
+	
+	Varience : How well data is spread from centre Point.
+			   Substract all no from Median & Square it. Add all.divide by N-1
+			   To remove the Negative
+			   
+	Normal Distribution : Curve plotted based on Mean(Miu) & Standard Deviation(Sigma) (Sqrt of Varience)
+						  More Standard Deviation , Plot will spread Out
+						  Area of Curve = 1
+						  68%   -> Between Mean-SD & Mean+SD
+						  95%   -> Between Mean-2SD & Mean+2SD
+						  99.7% -> Between Mean-3SD & Mean+3SD
+						  
+	MSE (Mean Square Error) : (y-y^)2
+	
+	md5 Algo is used to create Signature of 32 byte.
+	shasum/sha1 Algo.
+	
+	Data Snooping means Checks all the data.
+	
+	Digest() is used to provide 'Hash Value'.
+	
+	loc[]  -> Used for Flags
+	iloc[] -> Used with index
+	
+	#Function for Splitting the Train Test Data Based on Random
+	def split_train_test(data,test_ratio):
+		np.random.seed(42)
+		shuffled_indices = np.random.permutation(len(data))
+        test_set_size = int(len(data)*test_ratio)
+        test_indices = shuffled_indices[:test_set_size]
+        train_indices = shuffled_indices[test_set_size:]
+        return data.iloc[train_indices],data.iloc[test_indices]
+	
+	Problem : With updated Data ser, Data Snooping chances are there. 
+
+    #Function for Splitting Train Test Data based on Identifier
+    import hashlib
+	def test_set_check(identifier,test_ratio,hash):
+		return hash(np.int64(identifier)).digest()[-1] < 256*test_ratio
+		
+	def split_train_test_by_id (data,test_ratio,id_column,hash=hashlib.md5):
+		ids = data[id_column]
+		in_test_set = ids.apply(lambda id_:test_set_check(id_,test_ratio,hash))
+		return data.loc[~in_test_set],data.loc[in_test_set]
+		
+	#Function for Splitting Train Test Data based on Predefined Function
+		from sklearn.model_selection import train_test_split
+		X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)
+		
+	#To know the Version of Python
+	Python ---version
+	#To get the Python 3.6  : Source activate py36
+	
+	#To Know the Defination of Function
+	help(train_test_split)
+	
+	Sampling Bias Types : Convenience Sample, Voluntary Response, Non-response
+	
+	Sampling Method Types : Simple Random Sample,Startified Sample, Cluster Sample
+	
+	Precision : TP/TP+FP (Out of All Predicted values,how many are predictions are correctly)
+	
+	Recall : TP/TP+FN (Out of all correct values, how many correct values are predicted)
+	
+	F1 Score : 2 * ((Precision*Recall)/Precision+Recall)
+	
+	Increase in Threshold or Precision will lead to Decrease in Recall.
+	
+	ROC Curve can be used to decide which Algorithm needs to be selected.
+	
+	Notation :
+	----------
+		m : No. Of instances
+		h : Hypotheshis
+		y(i) : Actual Value of ith Element
+		y^   : Predicted Value of ith Element
+		X : Matirx
+		x : Vector
+		
+	Linear Regression is trained using MSE. Two ways for train Linear Regression are : Closed-Form Equation & Gradient Descent.
+	
+	Norm : Convert the Vector into a Scaler,denoted ||u||. Like: Euclidian Distance.
+			import np.linalg as LA
+			LA.norm(u)
+			
+	-> Multiplying vector by scaler will scale/zoom the vector. Also can be used to rotate
+	-> (u.v).w <> u.(v.w) (Dot product are not associative)
+	
+	-> angle θ = (u.v/||u||*||vv||)
+	
+	if u.v = 0, Means θ=90 or π/2
+	
+	#Diagonal Matrix
+	np.diag([1,2,3])
+	np.eye(3) # Identity Matrix
+	
+	-> Symmetric Matrix = A Matrix which is equal to its Transpose
+	
+	#convert one-dimensional Array into Matrix
+	u = [1,2]
+	u1 = np.array([u])
+	u2 = u[np.newaxis]
+	u3 = u[None]
+	
+	u1.T = u[:,np.newaxis]
+	
+	
