@@ -103,6 +103,10 @@
 	
 	Sampling Method Types : Simple Random Sample,Startified Sample, Cluster Sample
 	
+	Standardization : Based on Standard Deviation.i.e., Value-Mean/SD
+	
+	reshape(-1,1) : Makes Metrices of N*1
+	
 	Precision : TP/TP+FP (Out of All Predicted values,how many are predictions are correctly)
 	
 	Recall : TP/TP+FN (Out of all correct values, how many correct values are predicted)
